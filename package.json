@@ -7,6 +7,7 @@
     "@types/request": "0.0.43",
     "console.table": "^0.8.0",
     "request": "^2.81.0",
+    "ts-node": "^3.0.6",
     "typescript": "^2.3.4"
   },
   "devDependencies": {},
