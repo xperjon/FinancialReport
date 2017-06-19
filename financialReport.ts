@@ -1,4 +1,3 @@
-
 /// <reference path="financialReportModel.ts" />;
 import IAmount = FinancialReportModel.IAmount;
 import IFinancialReport = FinancialReportModel.IFinancialReport;
@@ -110,7 +109,6 @@ export default class FinancialReport {
                 }
             });
     }
-
 }
 
 /*

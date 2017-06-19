@@ -2,8 +2,6 @@
 import * as http from 'request';
 require('console.table');
 import FinancialReport from './financialReport';
-import ReportTable from './financialReport';
-
 
 class Main {
 
@@ -19,18 +17,6 @@ class Main {
             let fr = new FinancialReport(body);            
             console.table(fr.getReportTableRows());
         });
-    }
-    public static test() {
-        console.table([
-            {
-                name:'foo',
-                age:10
-            },
-            {
-                name:'bar',
-                age: 20
-            }
-        ]);
     }
 }
 Main.start();
