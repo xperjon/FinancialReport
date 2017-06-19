@@ -92,20 +92,34 @@ export default class FinancialReport {
         return sortedYears[i];
     }
 
-    public printRows() {
-        this.report.reportRowList.filter(r => this.shouldShowRow(r))
-            .forEach((r: IReportRowListItem) => {
+    private getAmounts(row: IReportRowListItem):string[] {
+        let result:string[] = [];
+        for(let i = 0; i < this.getNumberOfYears(); i++) {
+            result.push(this.getYearAmount(i, row.amounts).value || '-');
+        }
+        return result;
+    }
+
+    public getReportTableRows(): IReportTableRow[] {
+        return this.report.reportRowList.filter(r => this.shouldShowRow(r))
+            .map((r: IReportRowListItem) => {
                 if (r.type == 'D' || r.type.charAt(0) == 'S') {
-                    console.log(r.lineNumber + "\t" + r.type + "\t" + r.label + "\t\t" + this.getYearAmount(0, r.amounts).value + "\t\t" + this.getYearAmount(1, r.amounts).value);
-                }
-                else {
-                    console.log(r.lineNumber + "\t" + r.type + "\t" + r.label);
+                    return <IReportTableRow>{ id: '' + r.id, type: r.type, label: r.label, amounts: this.getAmounts(r) };
+                } else {
+                    return <IReportTableRow>{ id: '' + r.id, type: r.type, label: r.label, amounts: [] };
                 }
             });
     }
 
-    public getReportRows(): IReportRowListItem[] {
-        return [];
-    }
+}
 
+/*
+    Interface for displaying purposes
+*/
+
+export interface IReportTableRow {
+    id: string,
+    type: string,
+    label: string,
+    amounts: string[];
 }
