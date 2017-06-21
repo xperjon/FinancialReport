@@ -10,11 +10,11 @@ class Main {
             method: 'GET',
             url: 'https://annualreport-api-prod.jls-sto2.elastx.net/report-ws/api/v1/reports/53/incomestatement',
             headers: {
-                'uuid': 'f6071a80-4435-4bd3-9bd4-6ffbd7495b1f'
+                'uuid': '2d03bf48-5459-4fe1-a88c-ec4022b5136d'
             }
         };
         http(options, (error, res, body) => {
-            let fr = new FinancialReport(body);            
+            let fr = new FinancialReport(body); 
             console.table(fr.getReportTableRows());
         });
     }

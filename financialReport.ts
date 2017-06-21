@@ -6,9 +6,7 @@ import IFinancialYear = FinancialReportModel.IFinancialYear;
 
 export default class FinancialReport {
 
-
     private report: IFinancialReport;
-    private washedReportRows: IReportRowListItem[];
 
     constructor(modelStr: string) {
         this.report = JSON.parse(modelStr);
@@ -22,16 +20,20 @@ export default class FinancialReport {
             return this.getRowLevel(row) < 3 || this.rowHasAmountOnAtLeastOneYear(row);
         }
         if (row.type.charAt(0) == 'R') {
-            //TODO here we need to check if the matching summary row is hidden,
-            //then the header row (R) should also be hidden.
             if (row.type == 'RR1' || row.type == 'RB1') {
                 return false;
             }
-            return true;
+            return this.getRowLevel(row) < 3 || this.rowHasAmountOnAtLeastOneYear(this.getNextRowOfType(row, 'D'));
         }
         //Hide all other rows
         return false;
     }
+    private getNextRowOfType(row: IReportRowListItem, type: string): IReportRowListItem {
+        return this.report.reportRowList.sort((r1, r2) => r1.lineNumber - r2.lineNumber)
+            .filter(r => r.lineNumber > row.lineNumber)
+            .filter(r => r.type == type)[0];
+    }
+
     private rowHasAmountOnAtLeastOneYear(row: IReportRowListItem): boolean {
         let years: number = row.amounts.length;
         if (years > 0) {
@@ -69,7 +71,7 @@ export default class FinancialReport {
         return <IAmount>{};
     }
 
-    private getNumberOfYears(): number {
+    public getNumberOfYears(): number {
         return this.report.financialYears.length;
     }
 
@@ -85,15 +87,15 @@ export default class FinancialReport {
      * i == 1 => previous year
      * and so on...
      */
-    private getYear(i: number): IFinancialYear {
+    public getYear(i: number): IFinancialYear {
         let years: IFinancialYear[] = this.report.financialYears;
         let sortedYears: IFinancialYear[] = years.sort((y1, y2) => y2.year - y1.year);
         return sortedYears[i];
     }
 
-    private getAmounts(row: IReportRowListItem):string[] {
-        let result:string[] = [];
-        for(let i = 0; i < this.getNumberOfYears(); i++) {
+    private getAmounts(row: IReportRowListItem): string[] {
+        let result: string[] = [];
+        for (let i = 0; i < this.getNumberOfYears(); i++) {
             result.push(this.getYearAmount(i, row.amounts).value || '-');
         }
         return result;
@@ -103,9 +105,9 @@ export default class FinancialReport {
         return this.report.reportRowList.filter(r => this.shouldShowRow(r))
             .map((r: IReportRowListItem) => {
                 if (r.type == 'D' || r.type.charAt(0) == 'S') {
-                    return <IReportTableRow>{ id: '' + r.id, type: r.type, label: r.label, amounts: this.getAmounts(r) };
+                    return <IReportTableRow>{ id: '' + r.id, lineNumber: r.lineNumber, key: r.key, type: r.type, label: r.label, amounts: this.getAmounts(r) };
                 } else {
-                    return <IReportTableRow>{ id: '' + r.id, type: r.type, label: r.label, amounts: [] };
+                    return <IReportTableRow>{ id: '' + r.id, lineNumber: r.lineNumber, key: r.key, type: r.type, label: r.label, amounts: [] };
                 }
             });
     }
@@ -117,6 +119,8 @@ export default class FinancialReport {
 
 export interface IReportTableRow {
     id: string,
+    lineNumber: number,
+    key: string,
     type: string,
     label: string,
     amounts: string[];
