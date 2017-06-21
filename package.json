@@ -10,7 +10,10 @@
     "ts-node": "^3.0.6",
     "typescript": "^2.3.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2"
+  },
   "scripts": {
     "test": "ts-node  ./app.ts"
   },
